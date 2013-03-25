@@ -1,6 +1,6 @@
 require 'fluent-logger'
 
-module FluentLogging
+module RailsFluentLogging
   class LogDevice
     SEVERITY_MAP = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'UNKNOWN']
     class << self

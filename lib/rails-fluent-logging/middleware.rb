@@ -1,6 +1,6 @@
 require 'rails/rack/logger'
 
-module FluentLogging
+module RailsFluentLogging
   class Middleware < Rails::Rack::Logger
     protected
       def compute_tags(request)

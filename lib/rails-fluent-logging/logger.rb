@@ -1,7 +1,7 @@
 require 'active_support/tagged_logging'
 require File.expand_path('log_device', File.dirname(__FILE__))
 
-module FluentLogging
+module RailsFluentLogging
   class Logger < ActiveSupport::TaggedLogging
     class << self
       def default
