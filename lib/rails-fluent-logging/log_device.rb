@@ -1,6 +1,5 @@
 require 'fluent-logger'
 require File.expand_path('json_formatter', File.dirname(__FILE__))
-require File.expand_path('fallback_formatter', File.dirname(__FILE__))
 
 module RailsFluentLogging
   class LogDevice

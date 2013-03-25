@@ -13,6 +13,7 @@ Gem::Specification.new do |gem|
   gem.name          = 'rails-fluent-logging'
   gem.version       = '0.0.1'
 
+  gem.add_dependency('rails', '3.2.13')
   gem.add_dependency('fluent-logger', '0.4.4')
   gem.add_dependency('json-colorizer', '0.0.1')
 end
