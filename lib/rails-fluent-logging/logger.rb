@@ -1,4 +1,5 @@
 require 'active_support/tagged_logging'
+require File.expand_path('log_device', File.dirname(__FILE__))
 
 module FluentLogging
   class Logger < ActiveSupport::TaggedLogging
