@@ -46,7 +46,7 @@ module RailsFluentLogging
         message: (String === message ? message : message.inspect)
       })
 
-      post_to_fluentd(severity, log_entity) or fallback_log << "#{log_entity.to_s}\n"
+      post_to_fluentd(severity, log_entity) or fallback_log << "#{log_entity}\n"
     end
 
     def formatter=(formatter)
@@ -67,7 +67,8 @@ module RailsFluentLogging
 
     private
       def apply_formatting(entity)
-        {json_formatter.datetime(Time.now.utc) => json_formatter.call(entity)}
+        entity[:datetime] = Time.now.utc
+        json_formatter.call(entity)
       end
 
       def post_to_fluentd(severity, data)
@@ -111,7 +112,7 @@ module RailsFluentLogging
       end
 
       def fallback_log
-        @fallback_log ||= ::Logger.new($stderr)
+        @fallback_log ||= ::Logger.new($stdout)
       end
 
       def make_hash(tags)
