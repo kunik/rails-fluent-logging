@@ -46,7 +46,7 @@ module RailsFluentLogging
         message: (String === message ? message : message.inspect)
       })
 
-      post_to_fluentd(severity, log_entity) or fallback_log << "#{log_entity}\n"
+      post_to_fluentd(severity, log_entity) or fallback_log.add(severity, "#{log_entity}\n")
     end
 
     def formatter=(formatter)
