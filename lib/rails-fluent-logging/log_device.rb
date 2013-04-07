@@ -72,7 +72,7 @@ module RailsFluentLogging
 
       def clear_options!
         @options = nil
-        @log_level = nil
+        @level = nil
         @fallback_log = nil
         @fluentd_client = nil
         @json_formatter = nil
