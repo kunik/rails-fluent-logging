@@ -3,7 +3,7 @@ require File.expand_path('json_formatter', File.dirname(__FILE__))
 
 module RailsFluentLogging
   class LogDevice
-    SEVERITY_MAP = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'UNKNOWN']
+    SEVERITY_MAP = %w(DEBUG INFO WARN ERROR FATAL UNKNOWN)
 
     class << self
       def configure
@@ -16,7 +16,8 @@ module RailsFluentLogging
           app_name: 'rails_app',
           host: nil,
           port: 24224,
-          fallback_logger_level: :INFO,
+          level: :debug,
+          debug: :false,
           datetime_format: '%d/%m/%y %H:%M:%S.%L',
           log_schema: {_other: true}
         }
@@ -37,20 +38,18 @@ module RailsFluentLogging
       reconfigure!
     end
 
-    def silence(*args); end
+    def silence(*args) end
 
     def add(severity, tags, message, progname, &block)
+      return true if severity < level
+
       log_entity = apply_formatting({
-        severity: SEVERITY_MAP[severity],
+        severity: SEVERITY_MAP[severity] || SEVERITY_MAP.last,
         tags: make_hash(tags),
         message: (String === message ? message : message.inspect)
       })
 
-      post_to_fluentd(severity, log_entity) or fallback_log.add(severity, "#{log_entity}\n")
-    end
-
-    def formatter=(formatter)
-      fallback_log.formatter = formatter
+      post_to_fluentd(severity, log_entity) or fallback_log << "#{log_entity}\n"
     end
 
     def method_missing(method, *args)
@@ -58,11 +57,7 @@ module RailsFluentLogging
     end
 
     def reconfigure!
-      clear_logger_options!
-
-      if options[:fallback_logger_level]
-        fallback_log.level = ::Logger.const_get(options[:fallback_logger_level])
-      end
+      clear_options!
     end
 
     private
@@ -75,8 +70,9 @@ module RailsFluentLogging
         fluentd_connection_configured? && fluentd_client.post(severity, data)
       end
 
-      def clear_logger_options!
+      def clear_options!
         @options = nil
+        @log_level = nil
         @fallback_log = nil
         @fluentd_client = nil
         @json_formatter = nil
@@ -92,7 +88,7 @@ module RailsFluentLogging
       end
 
       def options
-        @options ||= { logger: fallback_log }.merge(self.class.config).tap do |options|
+        @options ||= {}.merge(self.class.config).tap do |options|
           if options[:uri]
             uri = URI.parse options[:uri]
 
@@ -101,6 +97,10 @@ module RailsFluentLogging
             options[:app_name] = uri.path.sub(/\A\/+/, '').gsub(/\/+/, '.')
           end
         end
+      end
+
+      def level
+        @level ||= ::Logger.const_get(options[:level].to_s.upcase.to_sym)
       end
 
       def fluentd_client
