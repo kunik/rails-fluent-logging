@@ -19,7 +19,29 @@ module RailsFluentLogging
           level: :debug,
           debug: :false,
           datetime_format: '%d/%m/%y %H:%M:%S.%L',
-          log_schema: {_other: true}
+          log_schema: {
+            datetime: [ :datetime, :green ],
+            severity: [ :severity ],
+            tags: [
+              lambda do |item|
+                parts = %W([#{item[:pid]}:#{item[:uuid]}])
+
+                if item[:user_id]
+                  parts << %(U##{item[:user_id]})
+                end
+
+                other = item.reject {|k, _| [:pid, :uuid, :user_id].include?(k)}
+                unless other.empty?
+                  parts << other.to_s
+                end
+
+                parts.join(' ')
+              end,
+              :white
+            ],
+            message: :message,
+            _other: true
+          }
         }
       end
 
