@@ -17,7 +17,7 @@ module RailsFluentLogging
           host: nil,
           port: 24224,
           level: :debug,
-          debug: :false,
+          debug: false,
           datetime_format: '%d/%m/%y %H:%M:%S.%L',
           log_schema: {
             datetime: [ :datetime, :green ],
