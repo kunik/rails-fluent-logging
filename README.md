@@ -19,3 +19,7 @@
       config[:level] = Rails.configuration.log_level
     end
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kunik/rails-fluent-logging/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
